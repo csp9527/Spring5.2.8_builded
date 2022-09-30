@@ -187,15 +187,19 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	}
 
 	private void parseDefaultElement(Element ele, BeanDefinitionParserDelegate delegate) {
+		// 对import标签的处理
 		if (delegate.nodeNameEquals(ele, IMPORT_ELEMENT)) {
 			importBeanDefinitionResource(ele);
 		}
+		// 对alias标签的处理
 		else if (delegate.nodeNameEquals(ele, ALIAS_ELEMENT)) {
 			processAliasRegistration(ele);
 		}
+		// 对bean标签的处理
 		else if (delegate.nodeNameEquals(ele, BEAN_ELEMENT)) {
 			processBeanDefinition(ele, delegate);
 		}
+		// 对beans标签的处理
 		else if (delegate.nodeNameEquals(ele, NESTED_BEANS_ELEMENT)) {
 			// recurse
 			doRegisterBeanDefinitions(ele);
@@ -207,7 +211,9 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	 * from the given resource into the bean factory.
 	 */
 	protected void importBeanDefinitionResource(Element ele) {
+		// 获取resource属性
 		String location = ele.getAttribute(RESOURCE_ATTRIBUTE);
+		// 如果不存在resource属性则不做处理
 		if (!StringUtils.hasText(location)) {
 			getReaderContext().error("Resource location must not be empty", ele);
 			return;
@@ -229,6 +235,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 		}
 
 		// Absolute or relative?
+		// 如果是绝对URI则直接根据地址加载对应的配置文件
 		if (absoluteLocation) {
 			try {
 				int importCount = getReaderContext().getReader().loadBeanDefinitions(location, actualResources);
